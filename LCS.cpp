@@ -7,7 +7,11 @@
 #include <psapi.h>
 #include <random>
 #include <iomanip>
+#include <cstdint> 
 using namespace std;
+
+uintptr_t stack_base = 0;
+size_t stack_at_base_case = 0;
 
 void print_B(std::string &s1, std::string &s2, std::vector<std::vector<char>> &&b)
 {
@@ -73,18 +77,24 @@ pair<vector<vector<int>>, vector<vector<char>>> lcs(string &s1, string &s2) {
 
 // STAMPA LCS
 void print_lcs(const vector<vector<char>>& b, const string& X, int i, int j, bool print = true) {
-    if (i == 0 || j == 0)
+    if (i == 0 || j == 0) {
+        char base_marker;
+        uintptr_t current_stack = reinterpret_cast<uintptr_t>(&base_marker);
+        if (stack_base > current_stack) {
+            stack_at_base_case = stack_base - current_stack;
+        }
         return;
+    }
 
-    if (b[i][j] == 'D') {  // Diagonale ↖
+    if (b[i][j] == 'D') {  // Diagonale ↖ (NON in coda: preserva lo stack frame per stampare dopo)
         print_lcs(b, X, i - 1, j - 1, print);
-        if (print) cout << X[i - 1];  // Stampa il carattere corrispondente
+        if (print) cout << X[i - 1];
     }
-    else if (b[i][j] == 'U') {  // Up ↑
-        print_lcs(b, X, i - 1, j, print);
+    else if (b[i][j] == 'U') {  // Up ↑ (IN CODA PURA: trasformabile in salto iterativo)
+        return print_lcs(b, X, i - 1, j, print);
     }
-    else {  // Left ←
-        print_lcs(b, X, i, j - 1, print);
+    else {  // Left ← (IN CODA PURA: trasformabile in salto iterativo)
+        return print_lcs(b, X, i, j - 1, print); 
     }
 }
 
@@ -103,7 +113,7 @@ string generaStringa(int n) {
     return s;
 }
 
-// Ritorna il picco di working set corrente del processo, in KB.
+// Ritorna il picco di working set corrente del processo (RAM Heap complessiva), in KB.
 long long picco_memoria_kb() {
     PROCESS_MEMORY_COUNTERS_EX pmc;
     GetProcessMemoryInfo(GetCurrentProcess(),
@@ -112,54 +122,62 @@ long long picco_memoria_kb() {
     return pmc.PeakWorkingSetSize / 1024;
 }
 
-int main() {
-    // Necessario per calcolare l'overhead di memoria fisso del programma non dipendente dalla dimensione delle stringhe di input.
+void esperimento(int n, string s1 = "", string s2 = "") {
     string s1_baseline, s2_baseline;
     auto [c_baseline, b_baseline] = lcs(s1_baseline, s2_baseline);
     long long baseline_kb = picco_memoria_kb();
 
-    int N[7] = {10, 100, 1000, 5000, 10000, 20000, 30000}; // 100000, 1000000};
-
-    for (int i = 0; i < 7; ++i) {
-        int n = N[i];
-        string s1 = generaStringa(n);
-        string s2 = generaStringa(n);
-
-        auto t0 = std::chrono::high_resolution_clock::now();
-        auto [c, b] = lcs(s1, s2);
-        auto t1 = std::chrono::high_resolution_clock::now();
-
-        double durata = std::chrono::duration<double, std::milli>(t1 - t0).count();  // In millisecondi
-        long long picco_kb = picco_memoria_kb();
-        long long overhead_kb = picco_kb - baseline_kb;
-        
-        if (overhead_kb < 0) overhead_kb = 0;
-
-        cout << "n: " << setw(5) << n
-             << "\tTempo: " << setw(7) << durata  << " ms"
-             //<< ", \tOverhead Fisso: " << baseline_kb << " KB"
-             //<< "\tPicco memoria totale: " << picco_kb << " KB"
-             << "\t\tMemoria netta programma: " << overhead_kb << " KB\n";
-
-        auto t2 = std::chrono::high_resolution_clock::now();
-        print_lcs(b, s1, s1.size(), s2.size(), false);  // Stampa la LCS senza output   
-        auto t3 = std::chrono::high_resolution_clock::now();
-        
-        double durata_stampa = std::chrono::duration<double, std::milli>(t3 - t2).count();
-
-        cout << "Tempo stampa LCS (" << setw(5) << n << "):\t"<< durata_stampa << " ms\n\n";
-
+    if (s1.empty() && s2.empty()) {
+        s1 = generaStringa(n);
+        s2 = generaStringa(n);
     }
 
-    // Stampa c
-    //print_C(s1, s2, c);
+    // 1. Benchmark Fase Calcolo Tabelle (Matrici c e b)
+    auto t0 = std::chrono::high_resolution_clock::now();
+    auto [c, b] = lcs(s1, s2);
+    auto t1 = std::chrono::high_resolution_clock::now();
 
-    // Stampa b
-    //print_B(s1, s2, b);
+    double durata = std::chrono::duration<double, std::milli>(t1 - t0).count();
+    long long picco_kb = picco_memoria_kb();
+    long long overhead_kb = picco_kb - baseline_kb;
+    
+    if (overhead_kb < 0) overhead_kb = 0;
 
-    //cout << "\nLCS: ";
-    //print_lcs(b, s1, s1.size(), s2.size());
+    cout << "n: " << setw(5) << n << "\n" 
+         << "Tempo calcolo: " << setw(7) << durata  << " ms"
+         << "\t\tRAM Heap tabelle: " << overhead_kb << " KB\n";
+
+
+    char base_marker;
+    stack_base = reinterpret_cast<uintptr_t>(&base_marker); 
+    stack_at_base_case = 0;                                 
+
+    auto t2 = std::chrono::high_resolution_clock::now();
+    print_lcs(b, s1, s1.size(), s2.size(), false); // false = non inquina la console
+    auto t3 = std::chrono::high_resolution_clock::now();
+    
+    double durata_stampa = std::chrono::duration<double, std::milli>(t3 - t2).count();
+
+    cout << "Tempo ricostruzione (" << setw(5) << n << "): " << setw(7) << durata_stampa << " ms"
+         << "\tProfondita' Stack ricorsione: " << setw(7) << stack_at_base_case << " Byte (~" 
+         << fixed << setprecision(2) << stack_at_base_case / 1024.0 << " KB)\n\n";
+}
+
+int main() {
+
+    int N[] = {10, 100, 1000, 5000, 10000};
+    int num_test = sizeof(N) / sizeof(N[0]);
+    
+    // Test con stringhe casuali
+    for (int i = 0; i < num_test; ++i) {
+        int n = N[i];
+        esperimento(n);
+    }
+
+    int k = 10000;
+    
+    // Test con LCS = 0 (stringhe diverse)
+    esperimento(k, string(k, 'A'), string(k, 'B'));
 
     return 0;
 }
-
