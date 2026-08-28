@@ -122,15 +122,16 @@ long long picco_memoria_kb() {
     return pmc.PeakWorkingSetSize / 1024;
 }
 
-void esperimento(int n, string s1 = "", string s2 = "") {
+void esperimento(int n, int m, string s1 = "", string s2 = "") {
     string s1_baseline, s2_baseline;
     auto [c_baseline, b_baseline] = lcs(s1_baseline, s2_baseline);
     long long baseline_kb = picco_memoria_kb();
 
     if (s1.empty() && s2.empty()) {
         s1 = generaStringa(n);
-        s2 = generaStringa(n);
+        s2 = generaStringa(m);
     }
+    
 
     // 1. Benchmark Fase Calcolo Tabelle (Matrici c e b)
     auto t0 = std::chrono::high_resolution_clock::now();
@@ -145,7 +146,7 @@ void esperimento(int n, string s1 = "", string s2 = "") {
 
     cout << "n: " << setw(5) << n << "\n" 
          << "Tempo calcolo: " << setw(7) << durata  << " ms"
-         << "\t\tRAM Heap tabelle: " << overhead_kb << " KB\n";
+         << "\t\t\tRAM Heap tabelle: " << overhead_kb << " KB\n";
 
 
     char base_marker;
@@ -159,25 +160,35 @@ void esperimento(int n, string s1 = "", string s2 = "") {
     double durata_stampa = std::chrono::duration<double, std::milli>(t3 - t2).count();
 
     cout << "Tempo ricostruzione (" << setw(5) << n << "): " << setw(7) << durata_stampa << " ms"
-         << "\tProfondita' Stack ricorsione: " << setw(7) << stack_at_base_case << " Byte (~" 
+         << "\t\tProfondita' Stack ricorsione: " << setw(7) << stack_at_base_case << " Byte (~" 
          << fixed << setprecision(2) << stack_at_base_case / 1024.0 << " KB)\n\n";
 }
 
-int main() {
+void esperimento(int n, string s1 = "", string s2 = "") {
+    esperimento(n, n, s1, s2);
+}
 
+int main() {
     int N[] = {10, 100, 1000, 5000, 10000};
     int num_test = sizeof(N) / sizeof(N[0]);
     
-    // Test con stringhe casuali
+
     for (int i = 0; i < num_test; ++i) {
         int n = N[i];
         esperimento(n);
     }
 
+    // Test con stringhe casuali
+    for (int i = 0; i < num_test; ++i) {
+        int n = N[i];
+        esperimento(n, 10);
+    }
+
     int k = 10000;
-    
     // Test con LCS = 0 (stringhe diverse)
     esperimento(k, string(k, 'A'), string(k, 'B'));
+    esperimento(k, string(k, 'A'), string(k, 'A'));
+
 
     return 0;
 }
