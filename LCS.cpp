@@ -25,8 +25,7 @@ void libera_memoria_processo() {
     EmptyWorkingSet(GetCurrentProcess());
 }
 
-void print_B(std::string &s1, std::string &s2, std::vector<std::vector<char>> &&b)
-{
+void print_B(std::string &s1, std::string &s2, std::vector<std::vector<char>> &&b) {
     cout << "\nMatrice b:\n";
 
     for (int i = 1; i <= s1.size(); ++i)

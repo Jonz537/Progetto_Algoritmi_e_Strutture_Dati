@@ -16,8 +16,6 @@ int lcs_versione3(string &s1, string &s2) {
     vector<int> c(n + 1, 0);
 
     for (int i = 1; i <= m; ++i) {
-
-
         // la variabile prev serve a memorizzare il valore "diagonale"  LCS[i-1][j-1] che viene sovrascritto durante l'aggiornamento di c[j]. 
         int prev = c[0];
 
