@@ -2,6 +2,8 @@
 #include <string>    
 #include <algorithm> 
 #include <vector>
+#include "lcs_versioni.h"
+
 using namespace std;
 
 // ============================================================
@@ -43,10 +45,10 @@ int lcs_versione3(string &s1, string &s2) {
     return c[n];
 }
 
-int main() {
-    string s1 = "AGGTApBp";
-    string s2 = "bGXTXAYpB";
-    int res = lcs_versione3(s1, s2);
-    cout << res;
-    return 0;
-}
+// int main() {
+//     string s1 = "AGGTApBp";
+//     string s2 = "bGXTXAYpB";
+//     int res = lcs_versione3(s1, s2);
+//     cout << res;
+//     return 0;
+// }
