@@ -10,8 +10,13 @@ using namespace std;
 // VERSIONE SPACE-OPTIMIZED: O(n*m) Tempo, O(n) Spazio
 // ============================================================
 int lcs_versione3(string &s1, string &s2) {
-  
+    
+    if (s1.length() < s2.length()) {
+        swap(s1, s2);
+    }
+    
     int m = s1.length(), n = s2.length();
+
 
     // Singolo vettore inizializzato a tutti zeri, memorizza i valori LCS per la riga corrente.
     // c[j] rappresenta la lunghezza della LCS di s1[0..i], s2[0..j]

@@ -254,11 +254,7 @@ int main() {
     cout << "\nTEST CON STRINGHE CASUALI n VARIABILE E m COSTANTE (m = 100)\n";
     for (int i = 0; i < num_test; ++i) {
         cout << "\nVersione 1\n";
-        if (N[i] <= 15000)  {
-            esperimento(N[i], 100);
-        } else {
-            cout << "\n Istanza troppo grande \n";
-        }
+        esperimento(N[i], 100);
         cout << "\nVersione 2\n";
         esperimento_2(N[i], 100);
         cout << "\nVersione 3\n";

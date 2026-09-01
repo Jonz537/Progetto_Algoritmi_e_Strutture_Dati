@@ -10,8 +10,12 @@ using namespace std;
 // ============================================================
 // Convenzione: scorriamo s1 sulle righe (i) e s2 sulle colonne (j), come avviene in lcs()
 int lcs_versione2(string &s1, string &s2) {
-    int m = s1.size();
-    int n = s2.size();
+
+    if (s1.length() < s2.length()) {
+        swap(s1, s2);
+    }
+
+    int m = s1.length(), n = s2.length();
 
     // due array lunghi n+1, anziché una matrice m+1 x n+1 
     vector<int> prev(n + 1, 0);
