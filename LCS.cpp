@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream> 
 #include <vector>
 #include <string>
 #include <algorithm>
@@ -232,55 +233,53 @@ void esperimento_3(int n, string s1 = "", string s2 = "") {
 
 
 int main() {
-    int N[] = {10, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000};
+    int N[] = {10, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 15000,
+         20000, 25000, 30000, 35000, 40000, 45000, 50000};
     int num_test = sizeof(N) / sizeof(N[0]);
     
     cout << "\nTEST CON STRINGHE CASUALI n = m\n";
     for (int i = 0; i < num_test; ++i) {
-        esperimento(N[i]);
+        cout << "\nVersione 1\n";
+        if (N[i] <= 15000)  {
+            esperimento(N[i]);
+        } else {
+            cout << "\n Istanza troppo grande \n";
+        }
+        cout << "\nVersione 2\n";
+        esperimento_2(N[i]);
+        cout << "\nVersione 3\n";
+        esperimento_3(N[i]);
     }
     
     cout << "\nTEST CON STRINGHE CASUALI n VARIABILE E m COSTANTE (m = 100)\n";
     for (int i = 0; i < num_test; ++i) {
-        esperimento(N[i], 100);
+        cout << "\nVersione 1\n";
+        if (N[i] <= 15000)  {
+            esperimento(N[i], 100);
+        } else {
+            cout << "\n Istanza troppo grande \n";
+        }
+        cout << "\nVersione 2\n";
+        esperimento_2(N[i], 100);
+        cout << "\nVersione 3\n";
+        esperimento_3(N[i], 100);
     }
 
     int k = 5000;
     cout << "\nESPERIMENTO LCS = 0\n";
     esperimento(k, string(k, 'A'), string(k, 'B'));
+    esperimento_2(k, string(k, 'A'), string(k, 'B'));
+    esperimento_3(k, string(k, 'A'), string(k, 'B'));
 
     cout << "\nESPERIMENTO STRINGHE UGUALI\n";
     esperimento(k, string(k, 'A'), string(k, 'A'));
+    esperimento_2(k, string(k, 'A'), string(k, 'A'));
+    esperimento_3(k, string(k, 'A'), string(k, 'A'));
 
     cout << "\n ESPERIMENTO ALFABETO SINGOLO CON n = 5000 E m = 200\n";
     esperimento(k, 200, string(k, 'A'), string(200, 'A'));
-
-    int N_2[] = {10, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 15000,
-         20000, 25000, 30000, 35000, 40000, 45000, 50000};
-    num_test = sizeof(N_2) / sizeof(N_2[0]);
-    
-    cout << "\n Confronto con versioni migliorate del codice\n";
-
-    cout << "\nTEST CON STRINGHE CASUALI n = m\n";
-    for (int i = 0; i < num_test; ++i) {
-        cout << "\nVersione 1\n";
-        esperimento(N_2[i]);
-        cout << "\nVersione 2\n";
-        esperimento_2(N_2[i]);
-        cout << "\nVersione 3\n";
-        esperimento_3(N_2[i]);
-    }
-    
-    cout << "\nTEST CON STRINGHE CASUALI n VARIABILE E m COSTANTE (m = 100)\n";
-    for (int i = 0; i < num_test; ++i) {
-        cout << "\nVersione 1\n";
-        esperimento(N_2[i], 100);
-        cout << "\nVersione 2\n";
-        esperimento_2(N_2[i], 100);
-        cout << "\nVersione 3\n";
-        esperimento_3(N_2[i], 100);
-    }
-
+    esperimento_2(k, 200, string(k, 'A'), string(200, 'A'));
+    esperimento_3(k, 200, string(k, 'A'), string(200, 'A'));
 
     return 0;
 }
