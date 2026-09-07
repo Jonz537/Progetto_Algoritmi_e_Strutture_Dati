@@ -31,10 +31,15 @@ void libera_memoria_processo() {
 void print_B(string &s1, string &s2, vector<vector<char>> &&b) {
     cout << "\nMatrice b:\n";
 
-    for (int i = 1; i <= s1.size(); ++i)
-    {
-        for (int j = 1; j <= s2.size(); ++j)
-        {
+    cout << "   ";
+    for (int j = 0; j < s2.size(); ++j) {
+        cout << s2[j] << " ";
+    }
+    cout << endl << "  ________________" << endl;
+
+    for (int i = 1; i <= s1.size(); ++i) {
+        cout << s1[i - 1] << " |";
+        for (int j = 1; j <= s2.size(); ++j) {
             cout << b[i][j] << " ";
         }
         cout << endl;
@@ -44,10 +49,8 @@ void print_B(string &s1, string &s2, vector<vector<char>> &&b) {
 void print_C(string &s1, string &s2, vector<vector<int>> &&c) {
     cout << "Matrice c:\n";
 
-    for (int i = 0; i <= s1.size(); ++i)
-    {
-        for (int j = 0; j <= s2.size(); ++j)
-        {
+    for (int i = 0; i <= s1.size(); ++i) {
+        for (int j = 0; j <= s2.size(); ++j) {
             cout << c[i][j] << " ";
         }
         cout << endl;
