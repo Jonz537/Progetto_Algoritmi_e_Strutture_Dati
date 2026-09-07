@@ -10,6 +10,7 @@
 #include <iomanip>
 #include <cstdint> 
 #include "lcs_versioni.h"
+
 using namespace std;
 
 uintptr_t stack_base = 0;
@@ -27,7 +28,7 @@ void libera_memoria_processo() {
     EmptyWorkingSet(GetCurrentProcess());
 }
 
-void print_B(std::string &s1, std::string &s2, std::vector<std::vector<char>> &&b) {
+void print_B(string &s1, string &s2, vector<vector<char>> &&b) {
     cout << "\nMatrice b:\n";
 
     for (int i = 1; i <= s1.size(); ++i)
@@ -40,7 +41,7 @@ void print_B(std::string &s1, std::string &s2, std::vector<std::vector<char>> &&
     }
 }
 
-void print_C(std::string &s1, std::string &s2, std::vector<std::vector<int>> &&c) {
+void print_C(string &s1, string &s2, vector<vector<int>> &&c) {
     cout << "Matrice c:\n";
 
     for (int i = 0; i <= s1.size(); ++i)
@@ -133,7 +134,7 @@ void esperimento(int n, int m, string s1 = "", string s2 = "") {
     long long mem_before_kb = memoria_corrente_kb();
 
     // 2. Allocazione ed esecuzione LCS
-    auto t0 = std::chrono::high_resolution_clock::now();
+    auto t0 = chrono::high_resolution_clock::now();
     auto [c, b] = lcs(s1, s2);
     auto t1 = std::chrono::high_resolution_clock::now();
 
@@ -232,50 +233,50 @@ void esperimento_3(int n, string s1 = "", string s2 = "") {
 
 
 
-int main() {
-    int N[] = {10, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 15000,
-         20000, 25000, 30000, 35000, 40000, 45000, 50000};
-    int num_test = sizeof(N) / sizeof(N[0]);
+// int main() {
+//     int N[] = {10, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 15000,
+//          20000, 25000, 30000, 35000, 40000, 45000, 50000};
+//     int num_test = sizeof(N) / sizeof(N[0]);
     
-    cout << "\nTEST CON STRINGHE CASUALI n = m\n";
-    for (int i = 0; i < num_test; ++i) {
-        cout << "\nVersione 1\n";
-        if (N[i] <= 15000)  {
-            esperimento(N[i]);
-        } else {
-            cout << "\n Istanza troppo grande \n";
-        }
-        cout << "\nVersione 2\n";
-        esperimento_2(N[i]);
-        cout << "\nVersione 3\n";
-        esperimento_3(N[i]);
-    }
+//     cout << "\nTEST CON STRINGHE CASUALI n = m\n";
+//     for (int i = 0; i < num_test; ++i) {
+//         cout << "\nVersione 1\n";
+//         if (N[i] <= 15000)  {
+//             esperimento(N[i]);
+//         } else {
+//             cout << "\n Istanza troppo grande \n";
+//         }
+//         cout << "\nVersione 2\n";
+//         esperimento_2(N[i]);
+//         cout << "\nVersione 3\n";
+//         esperimento_3(N[i]);
+//     }
     
-    cout << "\nTEST CON STRINGHE CASUALI n VARIABILE E m COSTANTE (m = 100)\n";
-    for (int i = 0; i < num_test; ++i) {
-        cout << "\nVersione 1\n";
-        esperimento(N[i], 100);
-        cout << "\nVersione 2\n";
-        esperimento_2(N[i], 100);
-        cout << "\nVersione 3\n";
-        esperimento_3(N[i], 100);
-    }
+//     cout << "\nTEST CON STRINGHE CASUALI n VARIABILE E m COSTANTE (m = 100)\n";
+//     for (int i = 0; i < num_test; ++i) {
+//         cout << "\nVersione 1\n";
+//         esperimento(N[i], 100);
+//         cout << "\nVersione 2\n";
+//         esperimento_2(N[i], 100);
+//         cout << "\nVersione 3\n";
+//         esperimento_3(N[i], 100);
+//     }
 
-    int k = 5000;
-    cout << "\nESPERIMENTO LCS = 0\n";
-    esperimento(k, string(k, 'A'), string(k, 'B'));
-    esperimento_2(k, string(k, 'A'), string(k, 'B'));
-    esperimento_3(k, string(k, 'A'), string(k, 'B'));
+//     int k = 5000;
+//     cout << "\nESPERIMENTO LCS = 0\n";
+//     esperimento(k, string(k, 'A'), string(k, 'B'));
+//     esperimento_2(k, string(k, 'A'), string(k, 'B'));
+//     esperimento_3(k, string(k, 'A'), string(k, 'B'));
 
-    cout << "\nESPERIMENTO STRINGHE UGUALI\n";
-    esperimento(k, string(k, 'A'), string(k, 'A'));
-    esperimento_2(k, string(k, 'A'), string(k, 'A'));
-    esperimento_3(k, string(k, 'A'), string(k, 'A'));
+//     cout << "\nESPERIMENTO STRINGHE UGUALI\n";
+//     esperimento(k, string(k, 'A'), string(k, 'A'));
+//     esperimento_2(k, string(k, 'A'), string(k, 'A'));
+//     esperimento_3(k, string(k, 'A'), string(k, 'A'));
 
-    cout << "\n ESPERIMENTO ALFABETO SINGOLO CON n = 5000 E m = 200\n";
-    esperimento(k, 200, string(k, 'A'), string(200, 'A'));
-    esperimento_2(k, 200, string(k, 'A'), string(200, 'A'));
-    esperimento_3(k, 200, string(k, 'A'), string(200, 'A'));
+//     cout << "\n ESPERIMENTO ALFABETO SINGOLO CON n = 5000 E m = 200\n";
+//     esperimento(k, 200, string(k, 'A'), string(200, 'A'));
+//     esperimento_2(k, 200, string(k, 'A'), string(200, 'A'));
+//     esperimento_3(k, 200, string(k, 'A'), string(200, 'A'));
 
-    return 0;
-}
+//     return 0;
+// }
